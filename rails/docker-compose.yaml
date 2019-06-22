@@ -1,0 +1,25 @@
+version: '3'
+services:
+#--------------------------Mysqlのコンテナ---------------------------------------
+  mysql:
+    image: mysql:8.0.16
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      #MACのlocalにファイルを作らないとデータが消えちゃうので作る
+      - "./mysql-date:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+#------------------------------railsのコンテナ-----------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    volumes:
+      - ".:/app"
+    ports:
+      - "3000:3000"
+    tty: true
+    depends_on:
+      - mysql
+    working_dir: "/app"
+#------------------------------------------------------------------------
